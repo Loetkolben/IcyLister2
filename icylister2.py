@@ -132,7 +132,7 @@ def _pretty_print(icylister, printer_func, with_timestamp=True, filter_fields=No
                 result = metadata
             else:
                 result = {}
-                for key, value in metadata:
+                for key, value in metadata.items():
                     if key in filter_fields:
                         result[key] = value
 
@@ -164,13 +164,29 @@ _printer_map = {
 
 # actual main()
 def main():
-    # TODO: Fix this arg parsing
-    url = sys.argv[1]
-    printer = _printer_map[sys.argv[2]]
+    # we only need argparse here, so only import it if we actually need it
+    import argparse
 
-    instance = IcyLister2(url)
-    # TODO: Cmd-line args for with_timestamp and filter_fields
-    _pretty_print(instance, printer, with_timestamp=True, filter_fields=None)
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("url", help="The URL of the Icecast (compatible) MP3 stream.")
+
+    parser.add_argument("printer", help="Name of the pretty printer to use.", choices=_printer_map.keys())
+
+    parser.add_argument("-t", "--with-timestamp",
+                        help="Include a '_timestamp' field with the current datetime.now() in the output.",
+                        action="store_true")
+
+    parser.add_argument("-s", "--select-fields", dest="selected_fields", metavar="FIELD",
+                        help="When given at least once, filter the output to only include the selected fields. "
+                             "If used in combination with -t / --with-timestamp, the timestamp is always included.",
+                        action="append")
+
+    args = parser.parse_args()
+
+    instance = IcyLister2(args.url)
+    _pretty_print(instance, _printer_map[args.printer],
+                  with_timestamp=args.with_timestamp, filter_fields=args.selected_fields)
     instance.close()
 
 
