@@ -1,0 +1,23 @@
+# Ignore Everything
+/*
+/*/
+
+# alwas ignore these files / folders
+__pycache__/
+*.py[cod]
+
+# Except These
+!.gitignore
+!.gitmodules
+!.gitattributes
+
+!README*
+!LICENCE*
+!CONTRIBUTORS*
+!CONTRIBUTING*
+
+!*.py
+!setup.py
+
+# Project
+!icylister2.py
